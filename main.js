@@ -17,9 +17,7 @@ const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
   });
   const page = await browser.newPage();
 
-  for (let cityIndex = 0; cityIndex < cities.length; cityIndex++) {
-    const city = cities[cityIndex];
-
+  for (const city of cities) {
     await page.goto(
       "https://nahlizenidokn.cuzk.cz/VyberBudovu/Stavba/InformaceO",
       {
@@ -52,7 +50,20 @@ const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
         (await page.url()) !=
         "https://nahlizenidokn.cuzk.cz/VyberBudovu/Stavba/InformaceO"
       ) {
-        outputData.push(await BuildingInfo(house, page));
+        house = await BuildingInfo(house, page);
+
+        /*
+        await page.evaluate(() => {
+          document
+            .querySelector("#ctl00_bodyPlaceHolder_linkCAPTCHAInfoPanel")
+            .click();
+        });
+        */
+        // https://nahlizenidokn.cuzk.cz/Telerik.Web.UI.WebResourceCache.axd?type=rca&isc=true&guid=877d6b52-3275-4386-b2c1-0655a12ad726
+
+        await page.waitForTimeout(2000);
+
+        outputData.push(house);
 
         fs.writeFile(
           process.env.OUTPUT ?? "./output/output.json",

@@ -83,6 +83,14 @@ module.exports = BuildingInfo = async (house, page) => {
             "#content > table.zarovnat.stinuj > tbody > tr > td"
           ) ?? document.querySelector("#content > div:nth-child(11)")
         ).innerText,
+        buildingUrl:
+          document.querySelector(
+            "#content > table.atributy.stinuj > tbody > tr:nth-child(3) > td:nth-child(2) > a"
+          ) !== undefined
+            ? document.querySelector(
+                "#content > table.atributy.stinuj > tbody > tr:nth-child(3) > td:nth-child(2) > a"
+              ).href
+            : null,
       };
 
     return house;
