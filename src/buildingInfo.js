@@ -1,5 +1,5 @@
 module.exports = BuildingInfo = async (house, page) => {
-  await page.evaluate((house) => {
+  return await page.evaluate((house) => {
     const building =
       document.querySelector("#content > h1").innerText ===
       "Informace o stavbě";

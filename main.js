@@ -52,8 +52,7 @@ const cities = JSON.parse(fs.readFileSync("cities.json", "utf8"));
         (await page.url()) !=
         "https://nahlizenidokn.cuzk.cz/VyberBudovu/Stavba/InformaceO"
       ) {
-        house = BuildingInfo(house, page);
-        outputData.push(house);
+        outputData.push(await BuildingInfo(house, page));
 
         fs.writeFile(
           process.env.OUTPUT ?? "output.json",
