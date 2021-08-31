@@ -9,7 +9,7 @@ fs.appendFile("output.json", "", function (err) {
 const cities = ["Pardubice"];
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: 0 });
+  const browser = await puppeteer.launch({ headless: 1 });
   const page = await browser.newPage();
 
   for (let cityIndex = 0; cityIndex < cities.length; cityIndex++) {
@@ -32,7 +32,7 @@ const cities = ["Pardubice"];
     }, city);
 
     // for every house
-    for (let houseNumber = 12; houseNumber < 10000; houseNumber++) {
+    for (let houseNumber = 1; houseNumber < 10000; houseNumber++) {
       await page.waitForTimeout(2000);
 
       let house = { city, houseNumber };
@@ -52,8 +52,8 @@ const cities = ["Pardubice"];
       ) {
         house = await page.evaluate((house) => {
           const detachedHouse =
-            document.querySelector("#content > h2:nth-child(5)").innerText !==
-            "Vymezené jednotky";
+            document.querySelector("#content > h1").innerText !==
+            "Informace o stavbě";
 
           house = {
             ...house,
@@ -122,18 +122,33 @@ const cities = ["Pardubice"];
               : null,
             street: detachedHouse
               ? document.querySelector(
-                  "#content > table.atributy.stinuj > tbody > tr:nth-child(4) > td:nth-child(2)"
-                ).innerText
+                  "#content > div.vysledek--mapa > table > tbody > tr:nth-child(1) > td:nth-child(2) > a"
+                ).href
               : null,
             neighborParcelsUrl: detachedHouse
               ? document.querySelector("#content > div.noPrint > a").href
               : null,
 
-            buildingProtection: (
-              document.querySelector(
-                "#content > table.zarovnat.stinuj > tbody > tr > td"
-              ) ?? document.querySelector("#content > div:nth-child(9)")
-            ).innerText,
+            buildingProtection:
+              (detachedHouse
+                ? document.querySelector(
+                    "#content > table.zarovnat.stinuj > tbody > tr > td"
+                  )
+                : document.querySelector(
+                    "#content > table:nth-child(10) > tbody > tr > td"
+                  ) ??
+                  document.querySelector("#content > div.nenalezenydata")) !==
+              null
+                ? (detachedHouse
+                    ? document.querySelector(
+                        "#content > table.zarovnat.stinuj > tbody > tr > td"
+                      )
+                    : document.querySelector(
+                        "#content > table:nth-child(10) > tbody > tr > td"
+                      ) ??
+                      document.querySelector("#content > div.nenalezenydata")
+                  ).innerText
+                : null,
           };
           return house;
         }, house);
