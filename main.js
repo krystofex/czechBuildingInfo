@@ -1,15 +1,26 @@
 const puppeteer = require("puppeteer");
+require("dotenv").config();
 var fs = require("fs");
 
 var outputData = [];
-fs.appendFile("output.json", "", function (err) {
+fs.appendFile(process.env.OUTPUT ?? "output.json", "", function (err) {
   if (err) throw err;
 });
 
-const cities = ["Pardubice"];
+const cities = JSON.parse(fs.readFileSync("cities.json", "utf8"));
+
+const SelectNumber = async (houseNumber, page) => {
+  await page.evaluate((houseNumber) => {
+    document.querySelector("#ctl00_bodyPlaceHolder_txtBudova").value =
+      houseNumber;
+    document.querySelector("#ctl00_bodyPlaceHolder_btnVyhledat").click();
+  }, houseNumber);
+};
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: 1 });
+  const browser = await puppeteer.launch({
+    headless: true,
+  });
   const page = await browser.newPage();
 
   for (let cityIndex = 0; cityIndex < cities.length; cityIndex++) {
@@ -32,16 +43,13 @@ const cities = ["Pardubice"];
     }, city);
 
     // for every house
-    for (let houseNumber = 29; houseNumber < 10000; houseNumber++) {
+    for (let houseNumber = 1; houseNumber < 10000; houseNumber++) {
       await page.waitForTimeout(2000);
 
       let house = { city, houseNumber };
+
       // select house
-      await page.evaluate((houseNumber) => {
-        document.querySelector("#ctl00_bodyPlaceHolder_txtBudova").value =
-          houseNumber;
-        document.querySelector("#ctl00_bodyPlaceHolder_btnVyhledat").click();
-      }, houseNumber);
+      await SelectNumber(houseNumber, page);
 
       await page.waitForTimeout(2000);
       process.stdout.write(`houseNumber: ${houseNumber}`);
@@ -129,14 +137,16 @@ const cities = ["Pardubice"];
           return house;
         }, house);
 
-
         outputData.push(house);
-        fs.writeFile("output.json", JSON.stringify(outputData), function (err) {
-          if (err) throw err;
 
-        });
-        
-      
+        fs.writeFile(
+          process.env.OUTPUT ?? "output.json",
+          JSON.stringify(outputData, null, 1),
+          function (err) {
+            if (err) throw err;
+          }
+        );
+
         await page.goBack();
 
         console.log(" -\033[32m DONE\033[0m");
