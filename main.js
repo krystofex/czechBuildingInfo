@@ -5,11 +5,11 @@ var SelectNumber = require("./src/selectNumber.js");
 var BuildingInfo = require("./src/buildingInfo.js");
 
 var outputData = [];
-fs.appendFile(process.env.OUTPUT ?? "output.json", "", function (err) {
+fs.appendFile(process.env.OUTPUT ?? "./output/output.json", "", function (err) {
   if (err) throw err;
 });
 
-const cities = JSON.parse(fs.readFileSync("cities.json", "utf8"));
+const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -55,7 +55,7 @@ const cities = JSON.parse(fs.readFileSync("cities.json", "utf8"));
         outputData.push(await BuildingInfo(house, page));
 
         fs.writeFile(
-          process.env.OUTPUT ?? "output.json",
+          process.env.OUTPUT ?? "./output/output.json",
           JSON.stringify(outputData, null, 1),
           function (err) {
             if (err) throw err;

@@ -2,8 +2,7 @@
 node_modules
 
 # output
-output.csv
-output.json
+output/*
 
 # secrets
 .env
