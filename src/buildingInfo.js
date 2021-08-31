@@ -62,12 +62,22 @@ module.exports = BuildingInfo = async (house, page) => {
         parcelType: document.querySelector(
           "#content > div.vysledek--mapa > table > tbody > tr:nth-child(9) > td:nth-child(2)"
         ).innerText,
-        street: document.querySelector(
-          "#content > table.atributy.stinuj > tbody > tr:nth-child(4) > td:nth-child(2) > a"
-        ).innerText,
-        address: document.querySelector(
-          "#content > table.atributy.stinuj > tbody > tr:nth-child(5) > td:nth-child(2) > a"
-        ).innerText,
+        street:
+          document.querySelector(
+            "#content > table.atributy.stinuj > tbody > tr:nth-child(4) > td:nth-child(2) > a"
+          ) !== null
+            ? document.querySelector(
+                "#content > table.atributy.stinuj > tbody > tr:nth-child(4) > td:nth-child(2) > a"
+              ).innerText
+            : null,
+        address:
+          document.querySelector(
+            "#content > table.atributy.stinuj > tbody > tr:nth-child(5) > td:nth-child(2) > a"
+          ) !== null
+            ? document.querySelector(
+                "#content > table.atributy.stinuj > tbody > tr:nth-child(5) > td:nth-child(2) > a"
+              ).innerText
+            : null,
         buildingProtection: (
           document.querySelector(
             "#content > table.zarovnat.stinuj > tbody > tr > td"
