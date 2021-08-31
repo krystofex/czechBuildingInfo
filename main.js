@@ -33,7 +33,7 @@ const cities = ["Pardubice"];
 
     // for every house
     for (let houseNumber = 1; houseNumber < 10000; houseNumber++) {
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(20000);
 
       let house = { city, houseNumber };
       // select house
@@ -43,7 +43,7 @@ const cities = ["Pardubice"];
         document.querySelector("#ctl00_bodyPlaceHolder_btnVyhledat").click();
       }, houseNumber);
 
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(20000);
       process.stdout.write(`houseNumber: ${houseNumber}`);
 
       if (
@@ -80,13 +80,6 @@ const cities = ["Pardubice"];
               : document.querySelector(
                   "#content > div.vysledek--mapa > table > tbody > tr:nth-child(5) > td:nth-child(2) > a"
                 ).innerText,
-            numberLVUrl: detachedHouse
-              ? document.querySelector(
-                  "#content > div.vysledek--mapa > table > tbody > tr:nth-child(4) > td:nth-child(2) > a"
-                ).href
-              : document.querySelector(
-                  "#content > div.vysledek--mapa > table > tbody > tr:nth-child(5) > td:nth-child(2) > a"
-                ).href,
 
             acreage: detachedHouse
               ? document.querySelector(
@@ -125,9 +118,6 @@ const cities = ["Pardubice"];
                   "#content > div.vysledek--mapa > table > tbody > tr:nth-child(1) > td:nth-child(2) > a"
                 ).href
               : null,
-            neighborParcelsUrl: detachedHouse
-              ? document.querySelector("#content > div.noPrint > a").href
-              : null,
 
             buildingProtection:
               (detachedHouse
@@ -152,8 +142,6 @@ const cities = ["Pardubice"];
           };
           return house;
         }, house);
-
-        house = { ...house, url: await page.url() };
 
         outputData.push(house);
         fs.writeFile("output.json", JSON.stringify(outputData), function (err) {
