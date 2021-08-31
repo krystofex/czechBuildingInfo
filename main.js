@@ -1,6 +1,8 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 var fs = require("fs");
+var SelectNumber = require("./src/selectNumber.js");
+var BuildingInfo = require("./src/buildingInfo.js");
 
 var outputData = [];
 fs.appendFile(process.env.OUTPUT ?? "output.json", "", function (err) {
@@ -8,14 +10,6 @@ fs.appendFile(process.env.OUTPUT ?? "output.json", "", function (err) {
 });
 
 const cities = JSON.parse(fs.readFileSync("cities.json", "utf8"));
-
-const SelectNumber = async (houseNumber, page) => {
-  await page.evaluate((houseNumber) => {
-    document.querySelector("#ctl00_bodyPlaceHolder_txtBudova").value =
-      houseNumber;
-    document.querySelector("#ctl00_bodyPlaceHolder_btnVyhledat").click();
-  }, houseNumber);
-};
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -58,85 +52,7 @@ const SelectNumber = async (houseNumber, page) => {
         (await page.url()) !=
         "https://nahlizenidokn.cuzk.cz/VyberBudovu/Stavba/InformaceO"
       ) {
-        house = await page.evaluate((house) => {
-          const building =
-            document.querySelector("#content > h1").innerText ===
-            "Informace o stavbě";
-
-          if (building)
-            house = {
-              ...house,
-              building,
-              buildingNumber: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(1) > td:nth-child(2) > strong"
-              ).innerText,
-              cityUrl: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(2) > td:nth-child(2) > a"
-              ).href,
-              numberLV: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(2) > td:nth-child(2) > a"
-              ).innerText,
-              parcelNumber: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(6) > td:nth-child(2)"
-              ).innerText,
-              buildingType: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(7) > td:nth-child(2)"
-              ).innerText,
-              buildingUsage: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(8) > td:nth-child(2)"
-              ).innerText,
-              buildingProtection: (
-                document.querySelector(
-                  "#content > table:nth-child(10) > tbody > tr > td"
-                ) ??
-                document.querySelector("#content > table > tbody > tr > td") ??
-                document.querySelector("#content > div.nenalezenydata")
-              ).innerText,
-            };
-          else
-            house = {
-              ...house,
-              building,
-              parcelNumber: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(1) > td:nth-child(2) > a"
-              ).innerText,
-              cityUrl: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(2) > td:nth-child(2) > a"
-              ).href,
-              numberLV: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(4) > td:nth-child(2) > a"
-              ).innerText,
-              parcelSize: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(5) > td:nth-child(2)"
-              ).innerText,
-              parcelType: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(6) > td:nth-child(2)"
-              ).innerText,
-              mapList: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(7) > td:nth-child(2) > a"
-              ).innerText,
-              sizeType: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(8) > td:nth-child(2)"
-              ).innerText,
-              parcelType: document.querySelector(
-                "#content > div.vysledek--mapa > table > tbody > tr:nth-child(9) > td:nth-child(2)"
-              ).innerText,
-              street: document.querySelector(
-                "#content > table.atributy.stinuj > tbody > tr:nth-child(4) > td:nth-child(2) > a"
-              ).innerText,
-              address: document.querySelector(
-                "#content > table.atributy.stinuj > tbody > tr:nth-child(5) > td:nth-child(2) > a"
-              ).innerText,
-              buildingProtection: (
-                document.querySelector(
-                  "#content > table.zarovnat.stinuj > tbody > tr > td"
-                ) ?? document.querySelector("#content > div:nth-child(11)")
-              ).innerText,
-            };
-
-          return house;
-        }, house);
-
+        house = BuildingInfo(house, page);
         outputData.push(house);
 
         fs.writeFile(
