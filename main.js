@@ -94,7 +94,7 @@ const cities = ["Pardubice"];
       house = { ...house, url: await page.url() };
 
       outputData.push(house);
-
+      console.log(`houseNumber: ${houseNumber}`);
       fs.writeFile("output.json", JSON.stringify(outputData), function (err) {
         if (err) throw err;
       });
