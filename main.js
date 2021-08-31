@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 var fs = require("fs");
 
-var outputData;
+var outputData = [];
 fs.appendFile("output.json", "", function (err) {
   if (err) throw err;
 });
@@ -93,8 +93,13 @@ const cities = ["Pardubice"];
 
       house = { ...house, url: await page.url() };
 
-      console.log(house);
-      await page.waitForTimeout(100000);
+      outputData.push(house);
+
+      fs.writeFile("output.json", JSON.stringify(outputData), function (err) {
+        if (err) throw err;
+      });
+
+      await page.goBack();
     }
   }
 })();
