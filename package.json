@@ -1,9 +1,12 @@
 {
   "name": "advscraper",
   "version": "1.0.0",
-  "main": "index.js",
-  "author": "Kryštof <48121710+krystofex@users.noreply.github.com>",
+  "main": "main.js",
+  "author": "Kryštof Krátký",
   "license": "MIT",
+  "scripts": {
+    "start": "node ./main.js"
+  },
   "dependencies": {
     "puppeteer": "^10.2.0"
   }
