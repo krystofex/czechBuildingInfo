@@ -1,0 +1,3 @@
+[submodule "input"]
+	path = input
+	url = https://gist.github.com/d4ef0a34716cf57c813eb60db975892d.git
