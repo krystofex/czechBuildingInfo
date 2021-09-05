@@ -9,7 +9,7 @@ fs.appendFile(process.env.OUTPUT ?? "./output/output.json", "", function (err) {
   if (err) throw err;
 });
 
-const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
+const cities = JSON.parse(fs.readFileSync("./input/CzechCities.json", "utf8"));
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -44,7 +44,7 @@ const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
       await SelectNumber(houseNumber, page);
 
       await page.waitForTimeout(2000);
-      process.stdout.write(`houseNumber: ${houseNumber}`);
+      process.stdout.write(`${city} | houseNumber: ${houseNumber} - `);
 
       if (
         (await page.url()) !=
@@ -75,8 +75,8 @@ const cities = JSON.parse(fs.readFileSync("./input/cities.json", "utf8"));
 
         await page.goBack();
 
-        console.log(" -\033[32m DONE\033[0m");
-      } else console.log(" -\033[31m Failed\033[0m");
+        console.log("\033[32m DONE\033[0m");
+      } else console.log("\033[31m FAILED\033[0m");
     }
   }
 })();
